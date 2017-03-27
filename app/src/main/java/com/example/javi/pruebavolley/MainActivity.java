@@ -3,6 +3,7 @@ package com.example.javi.pruebavolley;
 import android.content.ClipData;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -35,19 +36,23 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Item> aItems;
     private String TAG = "LogsAndroid";
 
+    MyAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.MyToolbar);
+        setSupportActionBar(toolbar);
         myRecyclerView = (RecyclerView) findViewById(R.id.MyRecyclerView);
         url ="https://dl.dropbox.com/s/8i4bgfwz7dxw15q/TiempoBueno.json?dl=0";
         aItems = new ArrayList<Item>();
         queue = Volley.newRequestQueue(this);
 
+        myRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         obtenerDatos();
 
-        Log.d(TAG, aItems.toString());
     }
 
     @Override
@@ -85,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.e(TAG, response.toString());
 
+
+
                 try {
 
                     JSONObject obj = new JSONObject(response);
@@ -98,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                         String sPred = objselected.getString("Pred");
                         Item itemselected = new Item(sCiud, sTemp, sPred, getApplicationContext());
                         aItems.add(itemselected);
+                        Log.e(TAG, sCiud);
 
                     }
 
@@ -115,6 +123,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         queue.add(stringRq);
+
+        adapter = new MyAdapter(aItems, this);
+
+        myRecyclerView.setAdapter(adapter);
 
     }
 
